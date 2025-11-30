@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Гірські маршрути України{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'mountains_roads/css/styles.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Навігація -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="{% url 'home' %}" class="logo">🏔️ Гірські маршрути</a>
+            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">☰</button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="{% url 'home' %}">Головна</a></li>
+                <li><a href="{% url 'routes-list' %}">Маршрути</a></li>
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'user-profile' user.username %}">Профіль</a></li>
+                    <li><a href="{% url 'logout' %}">Вийти ({{ user.username }})</a></li>
+                {% else %}
+                    <li><a href="{% url 'login' %}">Увійти</a></li>
+                    <li><a href="{% url 'register' %}">Реєстрація</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Повідомлення -->
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Основний контент -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Футер -->
+    <footer class="footer">
+        <div class="container">
+            <p>© 2025. Розроблено Анастасією Шкварлою</p>
+            <div class="footer-links">
+                <a href="{% url 'home' %}">Головна</a>
+                <a href="{% url 'routes-list' %}">Маршрути</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{% static 'mountains_roads/js/scripts.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

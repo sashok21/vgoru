@@ -1,0 +1,140 @@
+{# login.html #}
+{% extends 'mountains_roads/base.html' %}
+
+{% block title %}Вхід - Гірські маршрути{% endblock %}
+
+{% block extra_css %}
+<style>
+    .auth-container {
+        max-width: 500px;
+        margin: 3rem auto;
+        padding: 2rem;
+        background: var(--white);
+        border-radius: 15px;
+        box-shadow: 0 5px 20px var(--shadow);
+    }
+    
+    .auth-container h2 {
+        color: var(--primary-color);
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--primary-color);
+        font-weight: 600;
+    }
+    
+    .form-group input {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: 1rem;
+    }
+    
+    .form-group input:focus {
+        outline: none;
+        border-color: var(--accent-color);
+    }
+    
+    .errorlist {
+        list-style: none;
+        color: #ff6b6b;
+        padding: 0;
+        margin: 0.5rem 0 1rem 0;
+    }
+    
+    .errorlist li {
+        font-size: 0.85rem;
+        padding: 0.3rem 0;
+    }
+    
+    .form-submit {
+        width: 100%;
+        padding: 12px;
+        background: var(--accent-color);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .form-submit:hover {
+        background: var(--secondary-color);
+        transform: translateY(-2px);
+    }
+    
+    .auth-link {
+        text-align: center;
+        margin-top: 1.5rem;
+        color: var(--gray);
+    }
+    
+    .auth-link a {
+        color: var(--secondary-color);
+        text-decoration: none;
+        font-weight: 600;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="auth-container">
+        <h2>Вхід</h2>
+        
+        {% if form.non_field_errors %}
+            <div style="background: #ffebee; color: #c62828; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.username.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+                {{ form.password }}
+                {% if form.password.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.password.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+            
+            <button type="submit" class="form-submit">Увійти</button>
+        </form>
+        
+        <div class="auth-link">
+            Немаєте акаунту? <a href="{% url 'register' %}">Зареєструйтеся</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
