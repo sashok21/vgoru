@@ -1,4 +1,3 @@
-// Мобільне меню
 function toggleMobileMenu() {
     const navMenu = document.getElementById('navMenu');
     if (navMenu) {
@@ -6,7 +5,6 @@ function toggleMobileMenu() {
     }
 }
 
-// Закриття мобільного меню при кліку на посилання
 document.querySelectorAll('.nav-menu a').forEach(link => {
     link.addEventListener('click', () => {
         const navMenu = document.getElementById('navMenu');
@@ -14,7 +12,6 @@ document.querySelectorAll('.nav-menu a').forEach(link => {
     });
 });
 
-// Плавна прокрутка до секцій
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
@@ -24,8 +21,6 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                 behavior: 'smooth',
                 block: 'start'
             });
-
-            // Закрити мобільне меню після кліку
             const navMenu = document.getElementById('navMenu');
             if (navMenu) {
                 navMenu.classList.remove('active');
@@ -34,21 +29,16 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Активний пункт меню при прокрутці
 window.addEventListener('scroll', () => {
     const sections = document.querySelectorAll('section, header');
     const navLinks = document.querySelectorAll('.nav-menu a');
-
     let current = '';
-
     sections.forEach(section => {
         const sectionTop = section.offsetTop;
-        const sectionHeight = section.clientHeight;
         if (pageYOffset >= sectionTop - 200) {
             current = section.getAttribute('id');
         }
     });
-
     navLinks.forEach(link => {
         link.classList.remove('active');
         if (link.getAttribute('href').slice(1) === current) {
@@ -57,7 +47,6 @@ window.addEventListener('scroll', () => {
     });
 });
 
-// Анімація появи елементів при прокрутці
 const observerOptions = {
     threshold: 0.1,
     rootMargin: '0px 0px -100px 0px'
@@ -72,17 +61,14 @@ const observer = new IntersectionObserver((entries) => {
     });
 }, observerOptions);
 
-// Спостереження за картками маршрутів
 document.addEventListener('DOMContentLoaded', () => {
     const routeCards = document.querySelectorAll('.route-card');
     const featureCards = document.querySelectorAll('.feature-card');
-
     routeCards.forEach((card, index) => {
         card.style.opacity = '0';
         card.style.animationDelay = `${index * 0.1}s`;
         observer.observe(card);
     });
-
     featureCards.forEach((card, index) => {
         card.style.opacity = '0';
         card.style.animationDelay = `${index * 0.1}s`;
@@ -90,7 +76,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Обробка форми контактів
 const contactForm = document.querySelector('.contact-form form');
 if (contactForm) {
     contactForm.addEventListener('submit', (e) => {
@@ -100,7 +85,6 @@ if (contactForm) {
     });
 }
 
-// Зміна прозорості навігації при прокрутці
 window.addEventListener('scroll', () => {
     const navbar = document.querySelector('.navbar');
     if (navbar) {
@@ -114,161 +98,44 @@ window.addEventListener('scroll', () => {
     }
 });
 
-// Кнопка прокрутки вверх
-window.addEventListener('scroll', () => {
-    const scrollToTop = document.querySelector('.scroll-to-top');
-    if (scrollToTop) {
-        if (window.scrollY > 300) {
-            scrollToTop.classList.add('show');
+function toggleFavorite(url) {
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || ''
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        const btn = document.querySelector('.action-btn.favorite');
+        if (data.is_favorite) {
+            btn.classList.add('active');
+            btn.innerHTML = '<i class="fa-solid fa-heart-crack"></i> Видалити з улюблених';
         } else {
-            scrollToTop.classList.remove('show');
+            btn.classList.remove('active');
+            btn.innerHTML = '<i class="fa-solid fa-heart"></i> Додати в улюблені';
         }
-    }
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-    const scrollToTop = document.querySelector('.scroll-to-top');
-    if (scrollToTop) {
-        scrollToTop.addEventListener('click', () => {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        });
-    }
-});
-
-// Функції для управління AJAX запитами
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
+    });
 }
 
-// Валідація форм
-function validateForm(formId) {
-    const form = document.getElementById(formId);
-    if (!form) return true;
-
-    const inputs = form.querySelectorAll('input[required], textarea[required]');
-    let isValid = true;
-
-    inputs.forEach(input => {
-        if (!input.value.trim()) {
-            input.classList.add('error');
-            isValid = false;
+function toggleCompleted(url) {
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || ''
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        const btn = document.querySelector('.action-btn.completed');
+        if (data.is_completed) {
+            btn.classList.add('active');
+            btn.innerHTML = '<i class="fa-solid fa-xmark"></i> Позначити як не пройдено';
         } else {
-            input.classList.remove('error');
+            btn.classList.remove('active');
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> Позначити як пройдено';
         }
     });
-
-    return isValid;
 }
-
-// Форматування числових значень
-function formatNumber(num) {
-    return new Intl.NumberFormat('uk-UA').format(num);
-}
-
-// Копіювання тексту в буфер обміну
-function copyToClipboard(text) {
-    if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(text).then(() => {
-            alert('Скопійовано в буфер обміну!');
-        });
-    } else {
-        const textArea = document.createElement('textarea');
-        textArea.value = text;
-        textArea.style.position = 'fixed';
-        textArea.style.left = '-999999px';
-        document.body.appendChild(textArea);
-        textArea.focus();
-        textArea.select();
-        try {
-            document.execCommand('copy');
-            alert('Скопійовано в буфер обміну!');
-        } catch (err) {
-            console.error('Помилка при копіюванні:', err);
-        }
-        document.body.removeChild(textArea);
-    }
-}
-
-// Затримання виконання функції
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
-
-// Пошук за формою з затримкою
-const searchInput = document.querySelector('input[name="search"]');
-if (searchInput) {
-    searchInput.addEventListener('input', debounce(function() {
-        // Автоматичний пошук після 500мс паузи
-    }, 500));
-}
-
-// Навигация по вкладкам (якщо потрібна)
-function openTab(tabName) {
-    const tabContent = document.querySelectorAll('.tabcontent');
-    tabContent.forEach(tab => {
-        tab.style.display = 'none';
-    });
-
-    const tabButton = document.querySelectorAll('.tablinks');
-    tabButton.forEach(btn => {
-        btn.classList.remove('active');
-    });
-
-    const tab = document.getElementById(tabName);
-    if (tab) {
-        tab.style.display = 'block';
-    }
-
-    event.currentTarget.classList.add('active');
-}
-
-// Інітіалізація при завантаженні сторінки
-document.addEventListener('DOMContentLoaded', function() {
-    // Видалення splash-скрину
-    const splash = document.querySelector('.splash-screen');
-    if (splash) {
-        splash.style.opacity = '0';
-        setTimeout(() => {
-            splash.style.display = 'none';
-        }, 300);
-    }
-
-    // Встановлення фокусу на першому полі форми
-    const firstInput = document.querySelector('input:not([type="hidden"]):not([type="submit"])');
-    if (firstInput && document.activeElement === document.body) {
-        firstInput.focus();
-    }
-});
-
-// Обробка помилок
-window.addEventListener('error', (event) => {
-    console.error('Помилка:', event.message);
-    // Можете додати логування на сервер тут
-});
-
-// Логування невідловлених обіцянок
-window.addEventListener('unhandledrejection', (event) => {
-    console.error('Невідловлена помилка промісу:', event.reason);
-});

@@ -1,44 +1,24 @@
-<!DOCTYPE html>
-<html lang="uk">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Гірські маршрути України</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'mountains_roads/css/styles.css' %}">
-</head>
-<body>
-    <!-- Навігація -->
-    <nav class="navbar">
-        <div class="container">
-            <div class="logo">🏔️ Гірські маршрути</div>
-            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">☰</button>
-            <ul class="nav-menu" id="navMenu">
-                <li><a href="#home" class="active">Головна</a></li>
-                <li><a href="#routes">Маршрути</a></li>
-                <li><a href="#about">Про сайт</a></li>
-                <li><a href="#contacts">Контакти</a></li>
-            </ul>
-        </div>
-    </nav>
+{% extends 'mountains_roads/base.html' %}
+{% load static %}
 
-    <!-- Головний банер -->
+{% block title %}VGoru - Гірські маршрути України{% endblock %}
+
+{% block content %}
     <header class="hero" id="home">
         <div class="hero-overlay"></div>
         <div class="hero-content">
             <h1 class="hero-title">Відкрий для себе красу Українських Карпат</h1>
             <p class="hero-subtitle">Найкращі гірські маршрути для незабутніх пригод</p>
-            <a href="#routes" class="btn btn-primary">Переглянути маршрути</a>
+            <a href="{% url 'routes-list' %}" class="btn btn-primary">Переглянути маршрути</a>
         </div>
     </header>
 
-    <!-- Про сайт -->
     <section class="about-section" id="about">
         <div class="container">
             <h2 class="section-title">Про наш сайт</h2>
             <div class="about-content">
                 <p>
-                    Ласкаво просимо на сайт "Гірські маршрути України" — ваш надійний путівник у світ українських гір!
+                    Ласкаво просимо на сайт "VGoru" — ваш надійний путівник у світ українських гір!
                     Ми створили цей ресурс для любителів гірських походів, які прагнуть відкрити для себе найкрасивіші
                     куточки наших Карпат.
                 </p>
@@ -48,17 +28,17 @@
                 </p>
                 <div class="features">
                     <div class="feature-card">
-                        <div class="feature-icon">🗺️</div>
-                        <h3>Детальні маршрути</h3>
+                        <div class="feature-icon"><i class="fa-solid fa-map-location-dot"></i></div>
+                        <h3>{{ total_routes }} маршрутів</h3>
                         <p>Покрокові описи з картами та висотними профілями</p>
                     </div>
                     <div class="feature-card">
-                        <div class="feature-icon">⭐</div>
-                        <h3>Відгуки туристів</h3>
+                        <div class="feature-icon"><i class="fa-solid fa-star"></i></div>
+                        <h3>{{ total_reviews }} відгуків</h3>
                         <p>Реальний досвід від тих, хто вже пройшов ці шляхи</p>
                     </div>
                     <div class="feature-card">
-                        <div class="feature-icon">📸</div>
+                        <div class="feature-icon"><i class="fa-solid fa-camera"></i></div>
                         <h3>Фотогалереї</h3>
                         <p>Найкращі фото краєвидів та локацій</p>
                     </div>
@@ -67,96 +47,77 @@
         </div>
     </section>
 
-    <!-- Популярні маршрути -->
     <section class="routes-section" id="routes">
         <div class="container">
             <h2 class="section-title">Популярні маршрути</h2>
-            <div class="routes-grid">
-                <!-- Говерла -->
-                <div class="route-card">
-                    <div class="route-image" style="background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80');">
-                        <div class="route-badge">Найвища вершина</div>
-                    </div>
-                    <div class="route-content">
-                        <h3 class="route-title">Говерла</h3>
-                        <div class="route-meta">
-                            <span class="route-height">📍 2061 м</span>
-                            <span class="route-difficulty">🥾 Середня</span>
-                            <span class="route-time">⏱️ 6-8 год</span>
+            {% if featured_routes %}
+                <div class="routes-grid">
+                    {% for route in featured_routes %}
+                        <div class="route-card">
+                            <div class="route-image" style="background-image: url('{% if route.image %}{{ route.image.url }}{% else %}https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80{% endif %}');">
+                                <div class="route-badge">
+                                    {% if route.difficulty == 'easy' %}
+                                        <i class="fa-solid fa-circle" style="color: #4caf50;"></i> Легка
+                                    {% elif route.difficulty == 'medium' %}
+                                        <i class="fa-solid fa-circle" style="color: #ff9800;"></i> Середня
+                                    {% else %}
+                                        <i class="fa-solid fa-circle" style="color: #f44336;"></i> Важка
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="route-content">
+                                <h3 class="route-title">{{ route.name }}</h3>
+                                <div class="route-meta">
+                                    <span class="route-height"><i class="fa-solid fa-location-dot"></i> {{ route.height }} м</span>
+                                    <span class="route-difficulty"><i class="fa-solid fa-person-hiking"></i> {% if route.difficulty == 'easy' %}Легка{% elif route.difficulty == 'medium' %}Середня{% else %}Важка{% endif %}</span>
+                                    <span class="route-time"><i class="fa-solid fa-stopwatch"></i> {{ route.duration_hours|floatformat:0 }} год</span>
+                                </div>
+                                <div class="route-meta">
+                                    <span>{{ route.region }}</span>
+                                    <span><i class="fa-solid fa-star" style="color: #ffc107;"></i> {{ route.rating|floatformat:1 }}</span>
+                                </div>
+                                <p class="route-description">{{ route.description|truncatewords:20 }}</p>
+                                <a href="{% url 'route-detail' route.id %}" class="btn btn-secondary">Детальніше</a>
+                            </div>
                         </div>
-                        <p class="route-description">
-                            Найвища вершина України та Українських Карпат. Класичний маршрут через полонину Заросляк.
-                            Неймовірні краєвиди та відчуття перемоги на даху України!
-                        </p>
-                        <a href="#" class="btn btn-secondary">Детальніше</a>
-                    </div>
+                    {% endfor %}
                 </div>
-
-                <!-- Піп Іван -->
-                <div class="route-card">
-                    <div class="route-image" style="background-image: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80');">
-                        <div class="route-badge">Обсерваторія</div>
-                    </div>
-                    <div class="route-content">
-                        <h3 class="route-title">Піп Іван</h3>
-                        <div class="route-meta">
-                            <span class="route-height">📍 2022 м</span>
-                            <span class="route-difficulty">🥾 Важка</span>
-                            <span class="route-time">⏱️ 8-10 год</span>
-                        </div>
-                        <p class="route-description">
-                            Загадкова вершина з обсерваторією "Білий слон". Складний, але надзвичайно цікавий маршрут
-                            з історичними пам'ятками та панорамними видами на Чорногірський хребет.
-                        </p>
-                        <a href="#" class="btn btn-secondary">Детальніше</a>
-                    </div>
+                <div style="text-align: center; margin-top: 3rem;">
+                    <a href="{% url 'routes-list' %}" class="btn btn-primary">Переглянути всі маршрути</a>
                 </div>
-
-                <!-- Петрос -->
-                <div class="route-card">
-                    <div class="route-image" style="background-image: url('https://images.unsplash.com/photo-1519904981063-b0cf448d479e?w=800&q=80');">
-                        <div class="route-badge">Для досвідчених</div>
-                    </div>
-                    <div class="route-content">
-                        <h3 class="route-title">Петрос</h3>
-                        <div class="route-meta">
-                            <span class="route-height">📍 2020 м</span>
-                            <span class="route-difficulty">🥾 Середня</span>
-                            <span class="route-time">⏱️ 7-9 год</span>
-                        </div>
-                        <p class="route-description">
-                            Третя за висотою вершина України. Мальовничий маршрут через полонину Рогнєска з
-                            чудовими краєвидами на Чорногору та Свидовець. Ідеально для фотосесій!
-                        </p>
-                        <a href="#" class="btn btn-secondary">Детальніше</a>
-                    </div>
+            {% else %}
+                <div style="text-align: center; padding: 3rem; background: var(--light-green); border-radius: 10px;">
+                    <h3>Поки що немає доданих маршрутів</h3>
+                    <p>Адміністратор скоро додасть перші маршрути!</p>
+                    {% if user.is_superuser %}
+                        <a href="{% url 'admin:mountains_roads_mountainroute_add' %}" class="btn btn-primary" style="margin-top: 1rem;">Додати маршрут</a>
+                    {% endif %}
                 </div>
-            </div>
+            {% endif %}
         </div>
     </section>
 
-    <!-- Контакти -->
     <section class="contacts-section" id="contacts">
         <div class="container">
             <h2 class="section-title">Контакти</h2>
             <div class="contacts-content">
                 <div class="contact-info">
                     <div class="contact-item">
-                        <div class="contact-icon">📧</div>
+                        <div class="contact-icon"><i class="fa-solid fa-envelope"></i></div>
                         <div>
                             <h4>Email</h4>
                             <p>info@mountain-routes.ua</p>
                         </div>
                     </div>
                     <div class="contact-item">
-                        <div class="contact-icon">📱</div>
+                        <div class="contact-icon"><i class="fa-solid fa-phone"></i></div>
                         <div>
                             <h4>Телефон</h4>
                             <p>+380 XX XXX XX XX</p>
                         </div>
                     </div>
                     <div class="contact-item">
-                        <div class="contact-icon">📍</div>
+                        <div class="contact-icon"><i class="fa-solid fa-location-dot"></i></div>
                         <div>
                             <h4>Локація</h4>
                             <p>Україна, Карпати</p>
@@ -175,20 +136,4 @@
             </div>
         </div>
     </section>
-
-    <!-- Футер -->
-    <footer class="footer">
-        <div class="container">
-            <p>© 2025. Розроблено Анастасією Шкварлою</p>
-            <div class="footer-links">
-                <a href="#home">Головна</a>
-                <a href="#routes">Маршрути</a>
-                <a href="#about">Про сайт</a>
-                <a href="#contacts">Контакти</a>
-            </div>
-        </div>
-    </footer>
-
-    <script src="{% static 'mountains_roads/js/scripts.js' %}"></script>
-</body>
-</html>
+{% endblock %}

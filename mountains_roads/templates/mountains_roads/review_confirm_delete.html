@@ -1,120 +1,31 @@
-{# review_confirm_delete.html #}
 {% extends 'mountains_roads/base.html' %}
 
 {% block title %}Видалення відгуку{% endblock %}
 
-{% block extra_css %}
-<style>
-    .delete-container {
-        max-width: 500px;
-        margin: 3rem auto;
-        padding: 2rem;
-        background: var(--white);
-        border-radius: 15px;
-        box-shadow: 0 5px 20px var(--shadow);
-        text-align: center;
-    }
-
-    .delete-container h2 {
-        color: #c62828;
-        margin-bottom: 1rem;
-    }
-
-    .delete-warning {
-        background: #ffebee;
-        color: #c62828;
-        padding: 1.5rem;
-        border-radius: 8px;
-        margin-bottom: 2rem;
-        border-left: 4px solid #c62828;
-    }
-
-    .review-preview {
-        background: var(--light-green);
-        padding: 1.5rem;
-        border-radius: 8px;
-        margin-bottom: 2rem;
-        text-align: left;
-    }
-
-    .review-preview h4 {
-        color: var(--primary-color);
-        margin-bottom: 0.5rem;
-    }
-
-    .delete-buttons {
-        display: flex;
-        gap: 1rem;
-        justify-content: center;
-    }
-
-    .delete-buttons form,
-    .delete-buttons a {
-        flex: 1;
-    }
-
-    .delete-buttons form {
-        margin: 0;
-    }
-
-    .delete-buttons button,
-    .delete-buttons a {
-        padding: 12px;
-        border-radius: 8px;
-        font-weight: 600;
-        text-decoration: none;
-        cursor: pointer;
-        border: none;
-        transition: all 0.3s ease;
-        display: block;
-        width: 100%;
-    }
-
-    .delete-buttons button {
-        background: #ff6b6b;
-        color: white;
-    }
-
-    .delete-buttons button:hover {
-        background: #c62828;
-        transform: translateY(-2px);
-    }
-
-    .delete-buttons a {
-        background: #e0e0e0;
-        color: var(--dark-gray);
-    }
-
-    .delete-buttons a:hover {
-        background: #bdbdbd;
-    }
-</style>
-{% endblock %}
-
 {% block content %}
-<div class="container">
-    <div class="delete-container">
-        <h2>⚠️ Видалення відгуку</h2>
+    <div class="container">
+        <div class="delete-container">
+            <h2><i class="fa-solid fa-triangle-exclamation"></i> Видалення відгуку</h2>
 
-        <div class="delete-warning">
-            <p>Ви впевнені, що хочете видалити цей відгук? Цю дію не можна буде скасувати.</p>
-        </div>
+            <div class="delete-warning">
+                <p>Ви впевнені, що хочете видалити цей відгук? Цю дію не можна буде скасувати.</p>
+            </div>
 
-        <div class="review-preview">
-            <h4>{{ object.title }}</h4>
-            <p style="color: var(--gray); margin-bottom: 1rem;">{{ object.text }}</p>
-            <small style="color: var(--gray);">
-                Маршрут: <strong>{{ object.route.name }}</strong>
-            </small>
-        </div>
+            <div class="review-preview">
+                <h4>{{ object.title }}</h4>
+                <p style="color: var(--gray); margin-bottom: 1rem;">{{ object.text }}</p>
+                <small style="color: var(--gray);">
+                    Маршрут: <strong>{{ object.route.name }}</strong>
+                </small>
+            </div>
 
-        <div class="delete-buttons">
-            <form method="post">
-                {% csrf_token %}
-                <button type="submit">🗑️ Видалити навсіки</button>
-            </form>
-            <a href="{% url 'route-detail' object.route.id %}">Скасувати</a>
+            <div class="delete-buttons">
+                <form method="post">
+                    {% csrf_token %}
+                    <button type="submit"><i class="fa-solid fa-trash"></i> Видалити назавжди</button>
+                </form>
+                <a href="{% url 'route-detail' object.route.id %}">Скасувати</a>
+            </div>
         </div>
     </div>
-</div>
 {% endblock %}

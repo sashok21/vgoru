@@ -1,240 +1,104 @@
-{# user_profile.html #}
 {% extends 'mountains_roads/base.html' %}
 {% load static %}
 
 {% block title %}{{ profile_user.get_full_name|default:profile_user.username }} - Профіль{% endblock %}
 
-{% block extra_css %}
-<style>
-    .profile-header {
-        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-        color: white;
-        padding: 3rem 0;
-        margin-bottom: 3rem;
-    }
-    
-    .profile-info {
-        display: grid;
-        grid-template-columns: auto 1fr;
-        gap: 2rem;
-        align-items: start;
-    }
-    
-    .profile-avatar {
-        width: 150px;
-        height: 150px;
-        border-radius: 50%;
-        background: var(--white);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 4rem;
-        object-fit: cover;
-        border: 5px solid var(--white);
-    }
-    
-    .profile-details h1 {
-        font-size: 2rem;
-        margin-bottom: 0.5rem;
-    }
-    
-    .profile-details p {
-        margin: 0.5rem 0;
-        opacity: 0.9;
-    }
-    
-    .profile-stats {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 1rem;
-        margin-top: 2rem;
-    }
-    
-    .stat-box {
-        background: var(--white);
-        padding: 1.5rem;
-        border-radius: 10px;
-        text-align: center;
-        color: var(--dark-gray);
-    }
-    
-    .stat-number {
-        font-size: 2rem;
-        color: var(--secondary-color);
-        font-weight: bold;
-    }
-    
-    .stat-label {
-        font-size: 0.9rem;
-        color: var(--gray);
-    }
-    
-    .edit-btn {
-        margin-top: 1rem;
-    }
-    
-    .content-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 2rem;
-        margin-top: 2rem;
-    }
-    
-    .section {
-        background: var(--white);
-        padding: 2rem;
-        border-radius: 10px;
-        box-shadow: 0 3px 10px var(--shadow);
-    }
-    
-    .section h2 {
-        color: var(--primary-color);
-        margin-bottom: 1.5rem;
-        border-bottom: 3px solid var(--accent-color);
-        padding-bottom: 0.5rem;
-    }
-    
-    .section-empty {
-        color: var(--gray);
-        font-style: italic;
-        text-align: center;
-        padding: 2rem;
-        background: var(--light-green);
-        border-radius: 8px;
-    }
-    
-    .route-item {
-        padding: 1rem;
-        background: var(--light-green);
-        border-radius: 8px;
-        margin-bottom: 1rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    
-    .route-item a {
-        color: var(--secondary-color);
-        text-decoration: none;
-        font-weight: 600;
-    }
-    
-    .route-item a:hover {
-        text-decoration: underline;
-    }
-    
-    .review-item {
-        padding: 1rem;
-        border-left: 4px solid var(--accent-color);
-        background: var(--light-green);
-        margin-bottom: 1rem;
-        border-radius: 5px;
-    }
-    
-    .review-item h4 {
-        color: var(--primary-color);
-        margin-bottom: 0.3rem;
-    }
-    
-    .review-item .rating {
-        color: #ffc107;
-        font-size: 0.9rem;
-    }
-</style>
-{% endblock %}
-
 {% block content %}
-<div class="profile-header">
-    <div class="container">
-        <div class="profile-info">
-            {% if profile_user.profile.avatar %}
-                <img src="{{ profile_user.profile.avatar.url }}" alt="Аватар" class="profile-avatar">
-            {% else %}
-                <div class="profile-avatar">👤</div>
-            {% endif %}
-            
-            <div class="profile-details">
-                <h1>{{ profile_user.get_full_name|default:profile_user.username }}</h1>
-                <p>@{{ profile_user.username }}</p>
-                {% if profile_user.profile.bio %}
-                    <p>{{ profile_user.profile.bio }}</p>
+    <div class="page-header profile-gradient">
+        <div class="container">
+            <div class="profile-info">
+                {% if profile_user.profile.avatar %}
+                    <img src="{{ profile_user.profile.avatar.url }}" alt="Аватар" class="profile-avatar">
+                {% else %}
+                    <div class="profile-avatar"><i class="fa-solid fa-user"></i></div>
                 {% endif %}
-                <p>Член з {{ profile_user.date_joined|date:"d.m.Y" }}</p>
-                
-                {% if is_own_profile %}
-                    <a href="{% url 'profile-edit' %}" class="btn btn-secondary edit-btn">✏️ Редагувати профіль</a>
-                {% endif %}
-            </div>
-        </div>
-        
-        <div class="profile-stats">
-            <div class="stat-box">
-                <div class="stat-number">{{ completed_routes.count }}</div>
-                <div class="stat-label">Пройдених маршрутів</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-number">{{ favorite_routes.count }}</div>
-                <div class="stat-label">Улюблених</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-number">{{ user_reviews.count }}</div>
-                <div class="stat-label">Відгуків написано</div>
-            </div>
-        </div>
-    </div>
-</div>
 
-<div class="container">
-    <div class="content-grid">
-        <!-- Пройдені маршрути -->
-        <div class="section">
-            <h2>✅ Пройдені маршрути</h2>
-            {% if completed_routes %}
-                {% for route in completed_routes %}
-                    <div class="route-item">
-                        <a href="{% url 'route-detail' route.id %}">{{ route.name }}</a>
-                        <span style="color: var(--gray); font-size: 0.9rem;">{{ route.height }} м</span>
-                    </div>
-                {% endfor %}
-            {% else %}
-                <div class="section-empty">Ще не пройдено жодного маршруту</div>
-            {% endif %}
-        </div>
-        
-        <!-- Улюблені маршрути -->
-        <div class="section">
-            <h2>❤️ Улюблені маршрути</h2>
-            {% if favorite_routes %}
-                {% for route in favorite_routes %}
-                    <div class="route-item">
-                        <a href="{% url 'route-detail' route.id %}">{{ route.name }}</a>
-                        <span style="color: var(--gray); font-size: 0.9rem;">⭐ {{ route.get_average_rating|floatformat:1 }}</span>
-                    </div>
-                {% endfor %}
-            {% else %}
-                <div class="section-empty">Ще немає улюблених маршрутів</div>
-            {% endif %}
+                <div class="profile-details">
+                    <h1>{{ profile_user.get_full_name|default:profile_user.username }}</h1>
+                    <p>@{{ profile_user.username }}</p>
+                    {% if profile_user.profile.bio %}
+                        <p>{{ profile_user.profile.bio }}</p>
+                    {% endif %}
+                    <p>Член з {{ profile_user.date_joined|date:"d.m.Y" }}</p>
+
+                    {% if is_own_profile %}
+                        <a href="{% url 'profile-edit' %}" class="btn btn-secondary edit-btn"><i
+                                class="fa-solid fa-pen"></i> Редагувати профіль</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="profile-stats">
+                <div class="stat-box">
+                    <div class="stat-number">{{ completed_routes.count }}</div>
+                    <div class="stat-label">Пройдених маршрутів</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">{{ favorite_routes.count }}</div>
+                    <div class="stat-label">Улюблених</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">{{ user_reviews.count }}</div>
+                    <div class="stat-label">Відгуків написано</div>
+                </div>
+            </div>
         </div>
     </div>
-    
-    <!-- Відгуки користувача -->
-    {% if user_reviews %}
-        <div class="section" style="margin-top: 2rem;">
-            <h2>💬 Написані відгуки</h2>
-            {% for review in user_reviews %}
-                <div class="review-item">
-                    <h4>{{ review.title }}</h4>
-                    <p>Маршрут: <a href="{% url 'route-detail' review.route.id %}" style="color: var(--secondary-color);">{{ review.route.name }}</a></p>
-                    <div class="rating">
-                        {% for i in "12345" %}
-                            {% if forloop.counter <= review.rating %}⭐{% endif %}
-                        {% endfor %}
-                    </div>
-                    <p style="margin-top: 0.5rem; color: var(--gray); font-size: 0.9rem;">{{ review.text|truncatewords:20 }}</p>
-                    <small style="color: var(--gray);">{{ review.created_at|date:"d.m.Y" }}</small>
-                </div>
-            {% endfor %}
+
+    <div class="container">
+        <div class="content-grid">
+            <div class="section">
+                <h2><i class="fa-solid fa-circle-check"></i> Пройдені маршрути</h2>
+                {% if completed_routes %}
+                    {% for route in completed_routes %}
+                        <div class="route-item">
+                            <a href="{% url 'route-detail' route.id %}">{{ route.name }}</a>
+                            <span style="color: var(--gray); font-size: 0.9rem;">{{ route.height }} м</span>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="section-empty">Ще не пройдено жодного маршруту</div>
+                {% endif %}
+            </div>
+
+            <div class="section">
+                <h2><i class="fa-solid fa-heart"></i> Улюблені маршрути</h2>
+                {% if favorite_routes %}
+                    {% for route in favorite_routes %}
+                        <div class="route-item">
+                            <a href="{% url 'route-detail' route.id %}">{{ route.name }}</a>
+                            <span style="color: var(--gray); font-size: 0.9rem;"><i class="fa-solid fa-star"
+                                                                                    style="color: #ffc107;"></i> {{ route.get_average_rating|floatformat:1 }}</span>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="section-empty">Ще немає улюблених маршрутів</div>
+                {% endif %}
+            </div>
         </div>
-    {% endif %}
-</div>
+
+        {% if user_reviews %}
+            <div class="section" style="margin-top: 2rem;">
+                <h2><i class="fa-regular fa-comment-dots"></i> Написані відгуки</h2>
+                {% for review in user_reviews %}
+                    <div class="review-item">
+                        <h4>{{ review.title }}</h4>
+                        <p>Маршрут: <a href="{% url 'route-detail' review.route.id %}"
+                                       style="color: var(--secondary-color);">{{ review.route.name }}</a></p>
+                        <div class="rating">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= review.rating %}
+                                    <i class="fa-solid fa-star"></i>
+                                {% else %}
+                                    <i class="fa-regular fa-star" style="color: #bbb;"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <p style="margin-top: 0.5rem; color: var(--gray); font-size: 0.9rem;">{{ review.text|truncatewords:20 }}</p>
+                        <small style="color: var(--gray);">{{ review.created_at|date:"d.m.Y" }}</small>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
 {% endblock %}

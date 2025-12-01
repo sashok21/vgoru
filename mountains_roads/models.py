@@ -15,7 +15,8 @@ class MountainRoute(models.Model):
     height = models.IntegerField(verbose_name="Висота (м)", validators=[MinValueValidator(0)])
     duration_hours = models.FloatField(verbose_name="Тривалість (годин)", validators=[MinValueValidator(0.5)])
     distance_km = models.FloatField(verbose_name="Відстань (км)", validators=[MinValueValidator(0)])
-    image = models.ImageField(upload_to='routes/', verbose_name="Основне фото")
+    # Додано null=True, blank=True для безпеки
+    image = models.ImageField(upload_to='routes/', null=True, blank=True, verbose_name="Основне фото")
     map_coordinates = models.CharField(max_length=100, verbose_name="Координати (lat,lng)")
     gpx_file = models.FileField(upload_to='gpx/', null=True, blank=True, verbose_name="GPX файл маршруту")
     region = models.CharField(max_length=100, verbose_name="Регіон")

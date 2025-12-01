@@ -1,153 +1,46 @@
-{# register.html #}
 {% extends 'mountains_roads/base.html' %}
 
 {% block title %}Реєстрація - Гірські маршрути{% endblock %}
 
-{% block extra_css %}
-<style>
-    .auth-container {
-        max-width: 500px;
-        margin: 3rem auto;
-        padding: 2rem;
-        background: var(--white);
-        border-radius: 15px;
-        box-shadow: 0 5px 20px var(--shadow);
-    }
-
-    .auth-container h2 {
-        color: var(--primary-color);
-        text-align: center;
-        margin-bottom: 2rem;
-    }
-
-    .form-group {
-        margin-bottom: 1.5rem;
-    }
-
-    .form-group label {
-        display: block;
-        margin-bottom: 0.5rem;
-        color: var(--primary-color);
-        font-weight: 600;
-    }
-
-    .form-group input,
-    .form-group textarea {
-        width: 100%;
-        padding: 12px;
-        border: 2px solid #e0e0e0;
-        border-radius: 8px;
-        font-family: inherit;
-        font-size: 1rem;
-    }
-
-    .form-group input:focus,
-    .form-group textarea:focus {
-        outline: none;
-        border-color: var(--accent-color);
-    }
-
-    .form-group .helptext {
-        font-size: 0.85rem;
-        color: var(--gray);
-        margin-top: 0.3rem;
-    }
-
-    .form-group ul {
-        list-style: none;
-        padding: 0;
-        margin: 0.5rem 0 0 0;
-    }
-
-    .form-group ul li {
-        font-size: 0.85rem;
-        color: var(--gray);
-        padding: 0.2rem 0;
-    }
-
-    .errorlist {
-        list-style: none;
-        color: #ff6b6b;
-        padding: 0;
-        margin: 0.5rem 0;
-    }
-
-    .errorlist li {
-        font-size: 0.85rem;
-        padding: 0.3rem 0;
-    }
-
-    .form-submit {
-        width: 100%;
-        padding: 12px;
-        background: var(--accent-color);
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 1rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    .form-submit:hover {
-        background: var(--secondary-color);
-        transform: translateY(-2px);
-    }
-
-    .auth-link {
-        text-align: center;
-        margin-top: 1.5rem;
-        color: var(--gray);
-    }
-
-    .auth-link a {
-        color: var(--secondary-color);
-        text-decoration: none;
-        font-weight: 600;
-    }
-</style>
-{% endblock %}
-
 {% block content %}
-<div class="container">
-    <div class="auth-container">
-        <h2>Реєстрація</h2>
+    <div class="container">
+        <div class="auth-container">
+            <h2>Реєстрація</h2>
 
-        <form method="post" novalidate>
-            {% csrf_token %}
+            <form method="post" novalidate>
+                {% csrf_token %}
 
-            {% if form.non_field_errors %}
-                <div style="background: #ffebee; color: #c62828; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
-                    {% for error in form.non_field_errors %}
-                        <p>{{ error }}</p>
-                    {% endfor %}
-                </div>
-            {% endif %}
+                {% if form.non_field_errors %}
+                    <div style="background: #ffebee; color: #c62828; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                        {% for error in form.non_field_errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
 
-            {% for field in form %}
-                <div class="form-group">
-                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                    {{ field }}
-                    {% if field.errors %}
-                        <ul class="errorlist">
-                            {% for error in field.errors %}
-                                <li>{{ error }}</li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
-                    {% if field.help_text %}
-                        <div class="helptext">{{ field.help_text|safe }}</div>
-                    {% endif %}
-                </div>
-            {% endfor %}
+                {% for field in form %}
+                    <div class="form-group">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                            <ul class="errorlist">
+                                {% for error in field.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                        {% if field.help_text %}
+                            <div class="helptext">{{ field.help_text|safe }}</div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
 
-            <button type="submit" class="form-submit">Зареєструватися</button>
-        </form>
+                <button type="submit" class="form-submit">Зареєструватися</button>
+            </form>
 
-        <div class="auth-link">
-            Вже маєте акаунт? <a href="{% url 'login' %}">Увійдіть</a>
+            <div class="auth-link">
+                Вже маєте акаунт? <a href="{% url 'login' %}">Увійдіть</a>
+            </div>
         </div>
     </div>
-</div>
 {% endblock %}

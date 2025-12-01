@@ -9,7 +9,7 @@ class RouteReviewForm(forms.ModelForm):
         model = RouteReview
         fields = ['rating', 'title', 'text']
         widgets = {
-            'rating': forms.RadioSelect(choices=[(i, f'{i} ⭐') for i in range(1, 6)]),
+            'rating': forms.RadioSelect(choices=[(i, str(i)) for i in range(1, 6)]),
             'title': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Заголовок відгуку'
