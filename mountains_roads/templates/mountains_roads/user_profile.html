@@ -1,104 +1,120 @@
 {% extends 'mountains_roads/base.html' %}
 {% load static %}
 
-{% block title %}{{ profile_user.get_full_name|default:profile_user.username }} - Профіль{% endblock %}
+{% block title %}{{ profile_user.get_full_name|default:profile_user.username }} — VGoru{% endblock %}
 
 {% block content %}
-    <div class="page-header profile-gradient">
-        <div class="container">
-            <div class="profile-info">
-                {% if profile_user.profile.avatar %}
-                    <img src="{{ profile_user.profile.avatar.url }}" alt="Аватар" class="profile-avatar">
-                {% else %}
-                    <div class="profile-avatar"><i class="fa-solid fa-user"></i></div>
+<div class="page-header page-header--gradient">
+    <div class="container">
+        <div class="profile-info">
+            {% if profile_user.profile.avatar %}
+                <img src="{{ profile_user.profile.avatar.url }}"
+                     alt="Аватар {{ profile_user.username }}"
+                     class="profile-avatar">
+            {% else %}
+                <div class="profile-avatar profile-avatar--placeholder" aria-hidden="true">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+            {% endif %}
+
+            <div class="profile-details">
+                <h1 class="profile-details__name">
+                    {{ profile_user.get_full_name|default:profile_user.username }}
+                </h1>
+                <p class="profile-details__username">@{{ profile_user.username }}</p>
+                {% if profile_user.profile.bio %}
+                    <p class="profile-details__bio">{{ profile_user.profile.bio }}</p>
                 {% endif %}
-
-                <div class="profile-details">
-                    <h1>{{ profile_user.get_full_name|default:profile_user.username }}</h1>
-                    <p>@{{ profile_user.username }}</p>
-                    {% if profile_user.profile.bio %}
-                        <p>{{ profile_user.profile.bio }}</p>
-                    {% endif %}
-                    <p>Член з {{ profile_user.date_joined|date:"d.m.Y" }}</p>
-
-                    {% if is_own_profile %}
-                        <a href="{% url 'profile-edit' %}" class="btn btn-secondary edit-btn"><i
-                                class="fa-solid fa-pen"></i> Редагувати профіль</a>
-                    {% endif %}
-                </div>
+                <p style="font-size: var(--font-size-sm); opacity: 0.8;">
+                    Учасник з {{ profile_user.date_joined|date:"d.m.Y" }}
+                </p>
+                {% if is_own_profile %}
+                    <div style="margin-top: var(--spacing-4);">
+                        <a href="{% url 'mountains_roads:profile-edit' %}" class="btn btn--secondary btn--sm">
+                            Редагувати профіль
+                        </a>
+                    </div>
+                {% endif %}
             </div>
+        </div>
 
-            <div class="profile-stats">
-                <div class="stat-box">
-                    <div class="stat-number">{{ completed_routes.count }}</div>
-                    <div class="stat-label">Пройдених маршрутів</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-number">{{ favorite_routes.count }}</div>
-                    <div class="stat-label">Улюблених</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-number">{{ user_reviews.count }}</div>
-                    <div class="stat-label">Відгуків написано</div>
-                </div>
+        <div class="profile-stats">
+            <div class="stat-box">
+                <p class="stat-box__number">{{ completed_routes.count }}</p>
+                <p class="stat-box__label">Пройдених маршрутів</p>
+            </div>
+            <div class="stat-box">
+                <p class="stat-box__number">{{ favorite_routes.count }}</p>
+                <p class="stat-box__label">Улюблених</p>
+            </div>
+            <div class="stat-box">
+                <p class="stat-box__number">{{ user_reviews.count }}</p>
+                <p class="stat-box__label">Відгуків</p>
             </div>
         </div>
     </div>
+</div>
 
-    <div class="container">
-        <div class="content-grid">
-            <div class="section">
-                <h2><i class="fa-solid fa-circle-check"></i> Пройдені маршрути</h2>
-                {% if completed_routes %}
-                    {% for route in completed_routes %}
-                        <div class="route-item">
-                            <a href="{% url 'route-detail' route.id %}">{{ route.name }}</a>
-                            <span style="color: var(--gray); font-size: 0.9rem;">{{ route.height }} м</span>
-                        </div>
-                    {% endfor %}
-                {% else %}
-                    <div class="section-empty">Ще не пройдено жодного маршруту</div>
-                {% endif %}
-            </div>
-
-            <div class="section">
-                <h2><i class="fa-solid fa-heart"></i> Улюблені маршрути</h2>
-                {% if favorite_routes %}
-                    {% for route in favorite_routes %}
-                        <div class="route-item">
-                            <a href="{% url 'route-detail' route.id %}">{{ route.name }}</a>
-                            <span style="color: var(--gray); font-size: 0.9rem;"><i class="fa-solid fa-star"
-                                                                                    style="color: #ffc107;"></i> {{ route.get_average_rating|floatformat:1 }}</span>
-                        </div>
-                    {% endfor %}
-                {% else %}
-                    <div class="section-empty">Ще немає улюблених маршрутів</div>
-                {% endif %}
-            </div>
-        </div>
-
-        {% if user_reviews %}
-            <div class="section" style="margin-top: 2rem;">
-                <h2><i class="fa-regular fa-comment-dots"></i> Написані відгуки</h2>
-                {% for review in user_reviews %}
-                    <div class="review-item">
-                        <h4>{{ review.title }}</h4>
-                        <p>Маршрут: <a href="{% url 'route-detail' review.route.id %}"
-                                       style="color: var(--secondary-color);">{{ review.route.name }}</a></p>
-                        <div class="rating">
-                            {% for i in "12345" %}
-                                {% if forloop.counter <= review.rating %}
-                                    <i class="fa-solid fa-star"></i>
-                                {% else %}
-                                    <i class="fa-regular fa-star" style="color: #bbb;"></i>
-                                {% endif %}
-                            {% endfor %}
-                        </div>
-                        <p style="margin-top: 0.5rem; color: var(--gray); font-size: 0.9rem;">{{ review.text|truncatewords:20 }}</p>
-                        <small style="color: var(--gray);">{{ review.created_at|date:"d.m.Y" }}</small>
+<div class="container profile-content">
+    <div class="content-grid">
+        <section class="content-section">
+            <h2 class="content-section__title">
+                <i class="fa-solid fa-circle-check" aria-hidden="true"></i> Пройдені маршрути
+            </h2>
+            {% if completed_routes %}
+                {% for route in completed_routes %}
+                    <div class="route-item">
+                        <a href="{{ route.get_absolute_url }}" class="route-item__name">{{ route.name }}</a>
+                        <span class="route-item__meta">{{ route.height }} м</span>
                     </div>
                 {% endfor %}
-            </div>
-        {% endif %}
+            {% else %}
+                <p class="content-section--empty">Жодного пройденого маршруту</p>
+            {% endif %}
+        </section>
+
+        <section class="content-section">
+            <h2 class="content-section__title">
+                <i class="fa-solid fa-heart" aria-hidden="true"></i> Улюблені маршрути
+            </h2>
+            {% if favorite_routes %}
+                {% for route in favorite_routes %}
+                    <div class="route-item">
+                        <a href="{{ route.get_absolute_url }}" class="route-item__name">{{ route.name }}</a>
+                        <span class="route-item__meta">
+                            <i class="fa-solid fa-star star" aria-hidden="true"></i>
+                            {{ route.get_average_rating|floatformat:1 }}
+                        </span>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="content-section--empty">Жодного улюбленого маршруту</p>
+            {% endif %}
+        </section>
     </div>
+
+    {% if user_reviews %}
+        <section class="content-section" style="margin-top: var(--spacing-6);">
+            <h2 class="content-section__title">
+                <i class="fa-regular fa-comment-dots" aria-hidden="true"></i> Написані відгуки
+            </h2>
+            {% for review in user_reviews %}
+                <div class="review-item">
+                    <p class="review-item__title">{{ review.title }}</p>
+                    <p class="review-item__route">
+                        Маршрут:
+                        <a href="{{ review.route.get_absolute_url }}">{{ review.route.name }}</a>
+                    </p>
+                    <div class="review-item__stars" aria-label="Оцінка {{ review.rating }} з 5">
+                        {% with rating=review.rating %}
+                            {% include 'mountains_roads/partials/star_rating.html' %}
+                        {% endwith %}
+                    </div>
+                    <p class="review-item__excerpt">{{ review.text|truncatewords:25 }}</p>
+                    <p class="review-item__date">{{ review.created_at|date:"d.m.Y" }}</p>
+                </div>
+            {% endfor %}
+        </section>
+    {% endif %}
+</div>
 {% endblock %}

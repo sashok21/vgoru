@@ -1,103 +1,94 @@
-# VGoru - Веб-платформа гірських маршрутів
+# VGoru — Веб-платформа гірських маршрутів
 
-VGoru — це веб-застосунок на базі Django для каталогізації, перегляду та обговорення туристичних маршрутів Українських Карпат. Платформа надає можливість шукати маршрути, вести облік пройдених шляхів та взаємодіяти зі спільнотою мандрівників.
+Каталог туристичних маршрутів Українських Карпат на базі Django. Платформа дозволяє шукати маршрути, вести облік пройдених шляхів та залишати відгуки.
 
-## Функціональні можливості
+## Функціональність
 
-- **Каталог маршрутів** — детальна інформація про маршрути з зазначенням складності, висоти, тривалості та GPS-координат
-- **Розширена фільтрація** — пошук за регіоном, рівнем складності та фізичними параметрами
-- **Користувацькі профілі** — реєстрація, автентифікація, персоналізація облікового запису
-- **Соціальна взаємодія** — система відгуків, списки улюблених маршрутів, відмітки про пройдені шляхи
-- **Панель адміністратора** — повноцінне керування контентом для модераторів
+- Каталог маршрутів з фільтрацією за регіоном, складністю та висотою
+- Сторінка кожного маршруту з картою Leaflet та відгуками
+- Реєстрація, вхід, профіль користувача
+- Додавання маршрутів до улюблених та відмітка пройдених
+- Система відгуків з рейтингом
+- Панель адміністратора
 
 ## Технічний стек
 
-- **Backend:** Python 3.10+, Django 5.2.8
-- **Database:** SQLite (за замовчуванням)
-- **Frontend:** HTML5, CSS3, JavaScript
-- **Обробка зображень:** Pillow
+- Python 3.10+, Django 5.2, SQLite
+- Leaflet для інтерактивних карт
+- Pillow для обробки зображень
+- Модульний CSS з повноцінною системою дизайн-токенів
 
-## Швидкий старт
+## Встановлення
 
-### Вимоги
+```bash
+git clone <URL>
+cd vgoru
 
-Перед встановленням переконайтеся, що у вас є:
-- Python 3.10 або вище
-- pip (менеджер пакетів Python)
-- Git
+python3 -m venv venv
+source venv/bin/activate        # Windows: venv\Scripts\activate
 
-### Встановлення
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py createsuperuser
 
-1. **Клонування репозиторію**
-   ```bash
-   git clone <URL-вашого-репозиторію>
-   cd vgoru
-   ```
+# Опціонально: тестові дані (15 маршрутів, 8 користувачів, ~40 відгуків)
+python load_test_data.py
 
-2. **Створення віртуального оточення**
-   
-   Windows:
-   ```bash
-   python -m venv venv
-   venv\Scripts\activate
-   ```
-   
-   macOS/Linux:
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate
-   ```
+python manage.py runserver
+```
 
-3. **Встановлення залежностей**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Налаштування бази даних**
-   ```bash
-   python manage.py migrate
-   ```
-
-5. **Завантаження тестових даних (опціонально)**
-   
-   Для швидкої перевірки функціоналу можна наповнити БД демо-даними:
-   ```bash
-   python load_test_data.py
-   ```
-
-6. **Створення суперкористувача**
-   ```bash
-   python manage.py createsuperuser
-   ```
-
-7. **Запуск сервера**
-   ```bash
-   python manage.py runserver
-   ```
-
-Застосунок буде доступний за адресою: **http://127.0.0.1:8000/**
-
-Панель адміністратора: **http://127.0.0.1:8000/admin/**
+Застосунок: http://127.0.0.1:8000  
+Адмін-панель: http://127.0.0.1:8000/admin
 
 ## Структура проекту
 
 ```
 vgoru/
-├── vgoru/                    # Конфігурація проекту
-│   ├── settings.py          # Налаштування Django
-│   ├── urls.py              # Головна маршрутизація
-│   └── wsgi.py              # WSGI конфігурація
-├── mountains_roads/          # Основний додаток
-│   ├── models.py            # Моделі даних
-│   ├── views.py             # Логіка обробки запитів
-│   ├── urls.py              # URL-маршрути додатку
-│   ├── templates/           # HTML-шаблони
-│   └── static/              # Статичні файли (CSS, JS, зображення)
-├── manage.py                # CLI для Django
-├── db.sqlite3               # База даних
-└── requirements.txt         # Залежності проекту
+├── manage.py
+├── load_test_data.py
+├── requirements.txt
+├── vgoru/                          # Конфігурація проекту
+│   ├── urls.py
+│   ├── wsgi.py
+│   ├── asgi.py
+│   └── settings/
+│       ├── base.py                 # Спільні налаштування
+│       └── local.py                # Локальна розробка (DEBUG, DB)
+└── mountains_roads/                # Основний додаток
+    ├── models.py
+    ├── forms.py
+    ├── mixins.py                   # AuthorRequiredMixin, CssWidgetMixin тощо
+    ├── signals.py                  # Авто-створення профілю, оновлення рейтингу
+    ├── admin.py
+    ├── apps.py
+    ├── views/
+    │   ├── routes.py               # HomePageView, RoutesListView, RouteDetailView
+    │   ├── reviews.py              # ReviewCreateView, Update, Delete
+    │   ├── users.py                # UserProfileView, Registration, Update
+    │   └── ajax.py                 # toggle_favorite, toggle_completed
+    ├── urls/
+    │   ├── routes.py
+    │   ├── reviews.py
+    │   └── users.py
+    ├── templates/mountains_roads/
+    │   ├── base.html
+    │   ├── partials/               # route_card.html, star_rating.html
+    │   └── *.html
+    └── static/mountains_roads/
+        ├── css/
+        │   ├── styles.css          # Точка входу — імпортує всі модулі
+        │   ├── base/               # variables.css, reset.css, layout.css
+        │   ├── components/         # navbar, buttons, cards, forms, alerts, footer
+        │   └── pages/              # home, routes, user, reviews
+        └── js/
+            └── scripts.js
 ```
 
-## Контакти
+## Змінні середовища
 
-З питань щодо розгортання або роботи проекту зверт
+| Змінна               | За замовчуванням          | Опис                       |
+|----------------------|---------------------------|----------------------------|
+| `DJANGO_SETTINGS_MODULE` | `vgoru.settings.local` | Модуль налаштувань     |
+| `DJANGO_SECRET_KEY`  | (insecure dev key)        | Секретний ключ Django       |
+
+Для продакшену створіть `vgoru/settings/production.py` на основі `base.py` з `DEBUG=False` та змінними середовища.

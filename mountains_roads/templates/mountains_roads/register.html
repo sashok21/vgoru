@@ -1,46 +1,40 @@
 {% extends 'mountains_roads/base.html' %}
 
-{% block title %}Реєстрація - Гірські маршрути{% endblock %}
+{% block title %}Реєстрація — VGoru{% endblock %}
 
 {% block content %}
-    <div class="container">
-        <div class="auth-container">
-            <h2>Реєстрація</h2>
+<div class="container auth-page">
+    <div class="auth-box">
+        <h1 class="auth-box__title">Реєстрація</h1>
 
-            <form method="post" novalidate>
-                {% csrf_token %}
-
-                {% if form.non_field_errors %}
-                    <div style="background: #ffebee; color: #c62828; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
-                        {% for error in form.non_field_errors %}
-                            <p>{{ error }}</p>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-
-                {% for field in form %}
-                    <div class="form-group">
-                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                        {{ field }}
-                        {% if field.errors %}
-                            <ul class="errorlist">
-                                {% for error in field.errors %}
-                                    <li>{{ error }}</li>
-                                {% endfor %}
-                            </ul>
-                        {% endif %}
-                        {% if field.help_text %}
-                            <div class="helptext">{{ field.help_text|safe }}</div>
-                        {% endif %}
-                    </div>
-                {% endfor %}
-
-                <button type="submit" class="form-submit">Зареєструватися</button>
-            </form>
-
-            <div class="auth-link">
-                Вже маєте акаунт? <a href="{% url 'login' %}">Увійдіть</a>
+        {% if form.non_field_errors %}
+            <div class="form-error-block">
+                {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
             </div>
-        </div>
+        {% endif %}
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <ul class="errorlist">
+                            {% for error in field.errors %}<li>{{ error }}</li>{% endfor %}
+                        </ul>
+                    {% endif %}
+                    {% if field.help_text %}
+                        <p class="helptext">{{ field.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn btn--primary btn--full">Зареєструватись</button>
+        </form>
+
+        <p class="auth-box__footer">
+            Вже є акаунт? <a href="{% url 'mountains_roads:login' %}">Увійти</a>
+        </p>
     </div>
+</div>
 {% endblock %}

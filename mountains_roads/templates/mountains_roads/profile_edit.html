@@ -1,35 +1,31 @@
 {% extends 'mountains_roads/base.html' %}
 
-{% block title %}Редагування профілю{% endblock %}
+{% block title %}Редагування профілю — VGoru{% endblock %}
 
 {% block content %}
-    <div class="container">
-        <div class="edit-container">
-            <h2><i class="fa-solid fa-user-pen"></i> Редагування профілю</h2>
+<div class="container">
+    <div class="edit-box">
+        <h1 class="edit-box__title">Редагування профілю</h1>
 
-            <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-
-                {% for field in form %}
-                    <div class="form-group">
-                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                        {{ field }}
-                        {% if field.errors %}
-                            <ul style="color: #ff6b6b; list-style: none; padding: 0;">
-                                {% for error in field.errors %}
-                                    <li style="font-size: 0.85rem; margin-top: 0.3rem;">{{ error }}</li>
-                                {% endfor %}
-                            </ul>
-                        {% endif %}
-                    </div>
-                {% endfor %}
-
-                <div class="form-buttons">
-                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Зберегти зміни
-                    </button>
-                    <a href="{% url 'user-profile' user.username %}" class="btn btn-secondary">Скасувати</a>
+        <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <ul class="errorlist">
+                            {% for error in field.errors %}<li>{{ error }}</li>{% endfor %}
+                        </ul>
+                    {% endif %}
                 </div>
-            </form>
-        </div>
+            {% endfor %}
+            <div class="edit-box__actions">
+                <button type="submit" class="btn btn--primary">Зберегти</button>
+                <a href="{% url 'mountains_roads:user-profile' user.username %}"
+                   class="btn btn--ghost">Скасувати</a>
+            </div>
+        </form>
     </div>
+</div>
 {% endblock %}
