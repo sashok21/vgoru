@@ -1,0 +1,31 @@
+{% load static %}
+<article class="card route-card">
+    <div class="route-card__image" style="background-image: url('{% if route.image %}{{ route.image.url }}{% else %}https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80{% endif %}');">
+        <span class="route-card__badge route-card__badge--{{ route.difficulty }}">
+            <span class="route-card__difficulty-dot"></span>
+            {{ route.get_difficulty_display }}
+        </span>
+    </div>
+    <div class="route-card__body">
+        <h3 class="route-card__title">{{ route.name }}</h3>
+        <div class="route-card__meta">
+            <span class="route-card__meta-item">
+                <i class="fa-solid fa-location-dot"></i> {{ route.height }} м
+            </span>
+            <span class="route-card__meta-item">
+                <i class="fa-solid fa-stopwatch"></i> {{ route.duration_hours|floatformat:0 }} год
+            </span>
+            <span class="route-card__meta-item">
+                <i class="fa-solid fa-ruler-horizontal"></i> {{ route.distance_km|floatformat:0 }} км
+            </span>
+        </div>
+        <div class="route-card__meta">
+            <span class="route-card__meta-item">{{ route.region }}</span>
+            <span class="route-card__meta-item">
+                <i class="fa-solid fa-star star"></i> {{ route.get_average_rating|floatformat:1 }}
+            </span>
+        </div>
+        <p class="route-card__description">{{ route.description|truncatewords:20 }}</p>
+        <a href="{{ route.get_absolute_url }}" class="btn btn--secondary">Детальніше</a>
+    </div>
+</article>

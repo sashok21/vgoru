@@ -1,0 +1,42 @@
+.review-form-box {
+    max-width: 680px;
+    margin: var(--spacing-12) auto;
+    background-color: var(--color-surface);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-10);
+    box-shadow: var(--shadow-lg);
+}
+
+.review-form-box__title {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+    text-align: center;
+    margin-bottom: var(--spacing-6);
+}
+
+.route-info-banner {
+    background-color: var(--color-surface-alt);
+    border-left: 4px solid var(--color-accent);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    padding: var(--spacing-4);
+    margin-bottom: var(--spacing-8);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+}
+
+.route-info-banner strong {
+    color: var(--color-primary);
+}
+
+.review-form-box__actions {
+    display: flex;
+    gap: var(--spacing-3);
+    justify-content: center;
+    margin-top: var(--spacing-6);
+}
+
+.review-form-box__actions > * {
+    flex: 1;
+    max-width: 200px;
+}
