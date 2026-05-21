@@ -10,18 +10,20 @@ django.setup()
 from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
 from django.db import transaction
+from django.db.models.signals import post_save, post_delete
 
 from mountains_roads.models import MountainRoute, RouteReview, UserProfile
+from mountains_roads.signals import update_rating_on_save, update_rating_on_delete
 
 USERS = [
-    ('taras_shevchenko',   'Тарас',    'Шевченко'),
-    ('lesya_ukrainka',     'Леся',     'Українка'),
-    ('ivan_franko',        'Іван',     'Франко'),
-    ('bogdan_hmel',        'Богдан',   'Хмельницький'),
-    ('lina_kostenko',      'Ліна',     'Костенко'),
-    ('vasyl_stus',         'Василь',   'Стус'),
+    ('taras_shevchenko', 'Тарас', 'Шевченко'),
+    ('lesya_ukrainka', 'Леся', 'Українка'),
+    ('ivan_franko', 'Іван', 'Франко'),
+    ('bogdan_hmel', 'Богдан', 'Хмельницький'),
+    ('lina_kostenko', 'Ліна', 'Костенко'),
+    ('vasyl_stus', 'Василь', 'Стус'),
     ('grigoriy_skovoroda', 'Григорій', 'Сковорода'),
-    ('marusya_churay',     'Маруся',   'Чурай'),
+    ('marusya_churay', 'Маруся', 'Чурай'),
 ]
 
 ROUTES = [
@@ -311,28 +313,47 @@ def _create_routes() -> list[MountainRoute]:
 
 
 def _create_reviews(users: list[User], routes: list[MountainRoute]) -> int:
-    RouteReview.objects.all().delete()
-    count = 0
-    attempts = 0
-    max_attempts = REVIEWS_TARGET_COUNT * 3
+    """
+    Масово створює відгуки.
 
-    while count < REVIEWS_TARGET_COUNT and attempts < max_attempts:
-        attempts += 1
-        user = random.choice(users)
-        route = random.choice(routes)
-        if RouteReview.objects.filter(user=user, route=route).exists():
-            continue
-        text, base_rating = random.choice(REVIEW_TEMPLATES)
-        rating = max(1, min(5, base_rating + random.randint(-1, 1)))
-        RouteReview.objects.create(
-            user=user,
-            route=route,
-            rating=rating,
-            title=text[:40],
-            text=text,
-            helpful_count=random.randint(0, 15),
-        )
-        count += 1
+    Сигнали update_rating_on_save / update_rating_on_delete тимчасово
+    відключаються, щоб уникнути N зайвих UPDATE-запитів під час seed.
+    Після вставки всіх відгуків рейтинги перераховуються одним проходом.
+    """
+    # Відключаємо сигнали на час bulk-вставки
+    post_save.disconnect(update_rating_on_save, sender=RouteReview)
+    post_delete.disconnect(update_rating_on_delete, sender=RouteReview)
+
+    try:
+        RouteReview.objects.all().delete()
+        count = 0
+        attempts = 0
+        max_attempts = REVIEWS_TARGET_COUNT * 3
+
+        while count < REVIEWS_TARGET_COUNT and attempts < max_attempts:
+            attempts += 1
+            user = random.choice(users)
+            route = random.choice(routes)
+            if RouteReview.objects.filter(user=user, route=route).exists():
+                continue
+            text, base_rating = random.choice(REVIEW_TEMPLATES)
+            rating = max(1, min(5, base_rating + random.randint(-1, 1)))
+            RouteReview.objects.create(
+                user=user,
+                route=route,
+                rating=rating,
+                title=text[:40],
+                text=text,
+                helpful_count=random.randint(0, 15),
+            )
+            count += 1
+
+    finally:
+        post_save.connect(update_rating_on_save, sender=RouteReview)
+        post_delete.connect(update_rating_on_delete, sender=RouteReview)
+    print('  Перераховую рейтинги...')
+    for route in routes:
+        route.refresh_rating()
 
     return count
 

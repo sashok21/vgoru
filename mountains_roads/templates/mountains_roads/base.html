@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}VGoru — Гірські маршрути України{% endblock %}</title>
-    {% load static %}
+    {% load static vgoru_tags %}
     <link rel="stylesheet" href="{% static 'mountains_roads/css/styles.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     {% block extra_css %}{% endblock %}
@@ -20,14 +20,43 @@
                 <i class="fa-solid fa-bars" aria-hidden="true"></i>
             </button>
             <ul class="navbar__menu" id="navMenu" role="list">
-                <li><a href="{% url 'mountains_roads:home' %}" class="navbar__link">Головна</a></li>
-                <li><a href="{% url 'mountains_roads:routes-list' %}" class="navbar__link">Маршрути</a></li>
+                <li>
+                    <a href="{% url 'mountains_roads:home' %}"
+                       class="navbar__link {% active_link request 'mountains_roads:home' %}">
+                        Головна
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'mountains_roads:routes-list' %}"
+                       class="navbar__link {% active_link request 'mountains_roads:routes-list' %}">
+                        Маршрути
+                    </a>
+                </li>
                 {% if user.is_authenticated %}
-                    <li><a href="{% url 'mountains_roads:user-profile' user.username %}" class="navbar__link">Профіль</a></li>
-                    <li><a href="{% url 'mountains_roads:logout' %}" class="navbar__link">Вийти</a></li>
+                    <li>
+                        <a href="{% url 'mountains_roads:user-profile' user.username %}"
+                           class="navbar__link {% active_link request 'mountains_roads:user-profile' user.username %}">
+                            Профіль
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'mountains_roads:logout' %}" class="navbar__link">
+                            Вийти
+                        </a>
+                    </li>
                 {% else %}
-                    <li><a href="{% url 'mountains_roads:login' %}" class="navbar__link">Увійти</a></li>
-                    <li><a href="{% url 'mountains_roads:register' %}" class="navbar__link">Реєстрація</a></li>
+                    <li>
+                        <a href="{% url 'mountains_roads:login' %}"
+                           class="navbar__link {% active_link request 'mountains_roads:login' %}">
+                            Увійти
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'mountains_roads:register' %}"
+                           class="navbar__link {% active_link request 'mountains_roads:register' %}">
+                            Реєстрація
+                        </a>
+                    </li>
                 {% endif %}
             </ul>
         </div>
