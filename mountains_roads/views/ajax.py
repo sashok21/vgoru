@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
 from django.http import JsonResponse
+from django.views.decorators.http import require_POST
 
 from ..models import MountainRoute
 
@@ -11,10 +12,8 @@ def _is_ajax(request):
 
 
 @login_required
+@require_POST
 def toggle_favorite(request, route_id):
-    if request.method != 'POST':
-        return JsonResponse({'error': 'Method not allowed'}, status=405)
-
     route = get_object_or_404(MountainRoute, pk=route_id)
     profile = request.user.profile
 
@@ -35,10 +34,8 @@ def toggle_favorite(request, route_id):
 
 
 @login_required
+@require_POST
 def toggle_completed(request, route_id):
-    if request.method != 'POST':
-        return JsonResponse({'error': 'Method not allowed'}, status=405)
-
     route = get_object_or_404(MountainRoute, pk=route_id)
     profile = request.user.profile
 

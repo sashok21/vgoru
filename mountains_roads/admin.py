@@ -1,17 +1,33 @@
 from django.contrib import admin
+from django.utils.html import format_html
 
 from .models import MountainRoute, RouteReview, UserProfile
 
 
+class RouteReviewInline(admin.TabularInline):
+    model = RouteReview
+    extra = 0
+    fields = ('user', 'rating', 'title', 'text', 'helpful_count', 'created_at')
+    readonly_fields = ('created_at',)
+    ordering = ('-created_at',)
+    show_change_link = True
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related('user')
+
+
+
 @admin.register(MountainRoute)
 class MountainRouteAdmin(admin.ModelAdmin):
-    list_display = ('name', 'region', 'difficulty', 'height', 'rating', 'created_at')
+    list_display = ('name', 'region', 'difficulty', 'height', 'rating_display', 'reviews_count', 'created_at')
     list_display_links = ('name',)
     list_filter = ('difficulty', 'region')
     search_fields = ('name', 'description', 'region')
     ordering = ('-rating', '-created_at')
     list_per_page = 25
     readonly_fields = ('created_at', 'updated_at', 'rating')
+    inlines = [RouteReviewInline]
+    actions = ['recalculate_ratings']
 
     fieldsets = (
         ('Основна інформація', {
@@ -27,6 +43,40 @@ class MountainRouteAdmin(admin.ModelAdmin):
             'fields': ('rating', 'created_at', 'updated_at'),
         }),
     )
+
+
+    @admin.display(description='Рейтинг', ordering='rating')
+    def rating_display(self, obj):
+        if obj.rating == 0:
+            return '—'
+        stars = '★' * round(obj.rating) + '☆' * (5 - round(obj.rating))
+        return format_html(
+            '<span title="{:.2f}">{} {:.1f}</span>',
+            obj.rating, stars, obj.rating,
+        )
+
+    @admin.display(description='Відгуків')
+    def reviews_count(self, obj):
+        count = obj.reviews.count()
+        if count == 0:
+            return '0'
+        url = (
+            f'/admin/mountains_roads/routereview/?route__id__exact={obj.pk}'
+        )
+        return format_html('<a href="{}">{}</a>', url, count)
+
+
+    @admin.action(description='Перерахувати рейтинги вибраних маршрутів')
+    def recalculate_ratings(self, request, queryset):
+        updated = 0
+        for route in queryset:
+            route.refresh_rating()
+            updated += 1
+        self.message_user(
+            request,
+            f'Рейтинги перераховано для {updated} маршрут(ів).',
+        )
+
 
 
 @admin.register(RouteReview)

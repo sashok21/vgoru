@@ -1,5 +1,5 @@
 {% extends 'mountains_roads/base.html' %}
-{% load static %}
+{% load static vgoru_tags %}
 
 {% block title %}{{ route.name }} — VGoru{% endblock %}
 
@@ -115,9 +115,7 @@
                             <p class="review-card__date">{{ review.created_at|date:"d.m.Y H:i" }}</p>
                         </div>
                         <div class="review-card__stars" aria-label="Оцінка {{ review.rating }} з 5">
-                            {% with rating=review.rating %}
-                                {% include 'mountains_roads/partials/star_rating.html' %}
-                            {% endwith %}
+                            {% star_rating review.rating %}
                         </div>
                     </div>
                     <h3 class="review-card__title">{{ review.title }}</h3>
