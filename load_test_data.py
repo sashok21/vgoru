@@ -16,14 +16,14 @@ from mountains_roads.models import MountainRoute, RouteReview, UserProfile
 from mountains_roads.signals import update_rating_on_save, update_rating_on_delete
 
 USERS = [
-    ('taras_shevchenko', 'Тарас', 'Шевченко'),
-    ('lesya_ukrainka', 'Леся', 'Українка'),
-    ('ivan_franko', 'Іван', 'Франко'),
-    ('bogdan_hmel', 'Богдан', 'Хмельницький'),
-    ('lina_kostenko', 'Ліна', 'Костенко'),
-    ('vasyl_stus', 'Василь', 'Стус'),
+    ('taras_shevchenko',   'Тарас',    'Шевченко'),
+    ('lesya_ukrainka',     'Леся',     'Українка'),
+    ('ivan_franko',        'Іван',     'Франко'),
+    ('bogdan_hmel',        'Богдан',   'Хмельницький'),
+    ('lina_kostenko',      'Ліна',     'Костенко'),
+    ('vasyl_stus',         'Василь',   'Стус'),
     ('grigoriy_skovoroda', 'Григорій', 'Сковорода'),
-    ('marusya_churay', 'Маруся', 'Чурай'),
+    ('marusya_churay',     'Маруся',   'Чурай'),
 ]
 
 ROUTES = [
@@ -38,7 +38,7 @@ ROUTES = [
             "Найвища точка України. Маршрут з бази «Заросляк». "
             "Популярний, але кам'янистий підйом."
         ),
-        'image_url': 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Hoverla_View.jpg/800px-Hoverla_View.jpg',
+        'image_url': 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80',
         'coordinates': '48.1614, 24.5003',
     },
     {
@@ -52,7 +52,7 @@ ROUTES = [
             "Найбільше гірське озеро України, «Морське Око» Карпат. "
             "Легка прогулянка навколо озера серед смерек."
         ),
-        'image_url': 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Synevir_lake_from_above.jpg/800px-Synevir_lake_from_above.jpg',
+        'image_url': 'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&q=80',
         'coordinates': '48.6163, 23.6786',
     },
     {
@@ -66,7 +66,7 @@ ROUTES = [
             "Сходження до обсерваторії «Білий Слон». "
             "Один з наймальовничіших та найважчих маршрутів Чорногори."
         ),
-        'image_url': 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Pip_Ivan_Chornohora_observatory.jpg/800px-Pip_Ivan_Chornohora_observatory.jpg',
+        'image_url': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80',
         'coordinates': '48.0558, 24.6227',
     },
     {
@@ -80,7 +80,7 @@ ROUTES = [
             "Унікальний скельний комплекс у буковому лісі. "
             "Місце сили та легенд про опришків."
         ),
-        'image_url': 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Dovbush_rocks_2.jpg/800px-Dovbush_rocks_2.jpg',
+        'image_url': 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80',
         'coordinates': '48.8523, 24.0741',
     },
     {
@@ -94,7 +94,7 @@ ROUTES = [
             "Дуже стрімкий підйом та спуск. "
             "Чудова панорама на Говерлу. Небезпечний у погану погоду."
         ),
-        'image_url': 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Petros_mountain.jpg/800px-Petros_mountain.jpg',
+        'image_url': 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&q=80',
         'coordinates': '48.1497, 24.4586',
     },
     {
@@ -108,7 +108,7 @@ ROUTES = [
             "Популярний маршрут на Боржаві. "
             "Можна піднятися на витягу, далі пішки по хребту."
         ),
-        'image_url': 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Shypit_waterfall_2019.jpg/800px-Shypit_waterfall_2019.jpg',
+        'image_url': 'https://images.unsplash.com/photo-1546587348-d12660c30c50?w=800&q=80',
         'coordinates': '48.5891, 23.3012',
     },
     {
@@ -122,7 +122,7 @@ ROUTES = [
             "Скелі, схожі на вежі готичного замку. "
             "Неймовірно фотогенічне місце в масиві Чорногора."
         ),
-        'image_url': 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Spitsi_mountain.jpg/800px-Spitsi_mountain.jpg',
+        'image_url': 'https://images.unsplash.com/photo-1454496522488-7a8e488e8606?w=800&q=80',
         'coordinates': '48.0986, 24.5441',
     },
     {
@@ -136,7 +136,7 @@ ROUTES = [
             "Ідеальна гора для початківців. "
             "Серпантинна стежка через ліс, на вершині — статуя Матері Божої."
         ),
-        'image_url': 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Gorgany_Synyak.jpg/800px-Gorgany_Synyak.jpg',
+        'image_url': 'https://images.unsplash.com/photo-1448375240586-882707db888b?w=800&q=80',
         'coordinates': '48.3658, 24.5011',
     },
     {
@@ -150,7 +150,7 @@ ROUTES = [
             "Одне з найвищих озер України. "
             "Легенда каже: кинь камінь у воду — піде дощ."
         ),
-        'image_url': 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Nesamovyte_lake.jpg/800px-Nesamovyte_lake.jpg',
+        'image_url': 'https://images.unsplash.com/photo-1439853949212-36589f9e4ad4?w=800&q=80',
         'coordinates': '48.0701, 24.5639',
     },
     {
@@ -164,7 +164,7 @@ ROUTES = [
             "Найвища вершина Сколівських Бескидів. "
             "Гарний варіант для одноденного походу зі Львова."
         ),
-        'image_url': 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Parashka_mountain.jpg/800px-Parashka_mountain.jpg',
+        'image_url': 'https://images.unsplash.com/photo-1510797215324-95aa89f43c33?w=800&q=80',
         'coordinates': '49.0247, 23.4958',
     },
     {
@@ -178,7 +178,7 @@ ROUTES = [
             "Величезне рівне плато. "
             "Тут збереглися залишки старої радарної станції."
         ),
-        'image_url': 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Borzhava_Range.jpg/800px-Borzhava_Range.jpg',
+        'image_url': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80',
         'coordinates': '48.6712, 23.1084',
     },
     {
@@ -192,7 +192,7 @@ ROUTES = [
             "Класичні Горгани з каменем, вкритим зеленим мохом. "
             "Дуже атмосферний маршрут."
         ),
-        'image_url': 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Yavirnyk-Gorgan.jpg/800px-Yavirnyk-Gorgan.jpg',
+        'image_url': 'https://images.unsplash.com/photo-1425913397330-cf8af2ff40a1?w=800&q=80',
         'coordinates': '48.4503, 24.2147',
     },
     {
@@ -206,7 +206,7 @@ ROUTES = [
             "Найвища точка Львівщини. "
             "Гостра вершина з краєвидами на польський бік."
         ),
-        'image_url': 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Pikuy_mountain.jpg/800px-Pikuy_mountain.jpg',
+        'image_url': 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80',
         'coordinates': '49.0681, 23.2114',
     },
     {
@@ -220,7 +220,7 @@ ROUTES = [
             "Друга за висотою вершина України. "
             "Поруч — найвисокогірніше озеро країни."
         ),
-        'image_url': 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Brebeneskul_lake.jpg/800px-Brebeneskul_lake.jpg',
+        'image_url': 'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&q=80',
         'coordinates': '48.1042, 24.5391',
     },
     {
@@ -234,7 +234,7 @@ ROUTES = [
             "Один із двотисячників Чорногори. "
             "Менш людний за Говерлу, але не менш красивий."
         ),
-        'image_url': 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Hoverla_View.jpg/800px-Hoverla_View.jpg',
+        'image_url': 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&q=80',
         'coordinates': '48.1203, 24.4897',
     },
 ]
@@ -243,7 +243,7 @@ REVIEW_TEMPLATES = [
     ('Краєвиди просто неймовірні, варто кожного кроку.', 5),
     ('Маршрут важчий, ніж очікував, але воно того варте.', 4),
     ('Дуже багато туристів, тиші не знайти.', 3),
-    ('Обов\'язково беріть зручне взуття і достатньо води.', 5),
+    ("Обов'язково беріть зручне взуття і достатньо води.", 5),
     ('Найкращий похід у моєму житті.', 5),
     ('Погода зіпсувалась, нічого не побачили.', 2),
     ('Добре маркований маршрут, заблукати важко.', 5),
@@ -259,7 +259,7 @@ DEFAULT_PASSWORD = 'password123'
 def _fetch_image(url: str) -> bytes | None:
     try:
         req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-        with urllib.request.urlopen(req, timeout=10) as resp:
+        with urllib.request.urlopen(req, timeout=15) as resp:
             return resp.read()
     except Exception as exc:
         print(f'  Не вдалося завантажити {url}: {exc}')
@@ -280,7 +280,7 @@ def _create_users() -> list[User]:
         if created:
             user.set_password(DEFAULT_PASSWORD)
             user.save()
-            print(f'  Створено користувача: {username}')
+            print(f'  Створено: {username}')
         users.append(user)
     return users
 
@@ -302,10 +302,12 @@ def _create_routes() -> list[MountainRoute]:
             },
         )
         if created or not route.image:
-            print(f'  Завантажую фото для: {route.name}')
+            print(f'  Фото: {route.name}')
             image_data = _fetch_image(data['image_url'])
             if image_data:
                 route.image.save(f'route_{route.pk}.jpg', ContentFile(image_data), save=True)
+            else:
+                print(f'  Пропущено фото для: {route.name}')
         else:
             print(f'  Існує: {route.name}')
         routes.append(route)
@@ -313,14 +315,6 @@ def _create_routes() -> list[MountainRoute]:
 
 
 def _create_reviews(users: list[User], routes: list[MountainRoute]) -> int:
-    """
-    Масово створює відгуки.
-
-    Сигнали update_rating_on_save / update_rating_on_delete тимчасово
-    відключаються, щоб уникнути N зайвих UPDATE-запитів під час seed.
-    Після вставки всіх відгуків рейтинги перераховуються одним проходом.
-    """
-    # Відключаємо сигнали на час bulk-вставки
     post_save.disconnect(update_rating_on_save, sender=RouteReview)
     post_delete.disconnect(update_rating_on_delete, sender=RouteReview)
 
@@ -347,10 +341,10 @@ def _create_reviews(users: list[User], routes: list[MountainRoute]) -> int:
                 helpful_count=random.randint(0, 15),
             )
             count += 1
-
     finally:
         post_save.connect(update_rating_on_save, sender=RouteReview)
         post_delete.connect(update_rating_on_delete, sender=RouteReview)
+
     print('  Перераховую рейтинги...')
     for route in routes:
         route.refresh_rating()

@@ -16,7 +16,6 @@ class RouteReviewInline(admin.TabularInline):
         return super().get_queryset(request).select_related('user')
 
 
-
 @admin.register(MountainRoute)
 class MountainRouteAdmin(admin.ModelAdmin):
     list_display = ('name', 'region', 'difficulty', 'height', 'rating_display', 'reviews_count', 'created_at')
@@ -44,27 +43,22 @@ class MountainRouteAdmin(admin.ModelAdmin):
         }),
     )
 
-
     @admin.display(description='Рейтинг', ordering='rating')
     def rating_display(self, obj):
         if obj.rating == 0:
             return '—'
-        stars = '★' * round(obj.rating) + '☆' * (5 - round(obj.rating))
-        return format_html(
-            '<span title="{:.2f}">{} {:.1f}</span>',
-            obj.rating, stars, obj.rating,
-        )
+        filled = round(obj.rating)
+        stars = '★' * filled + '☆' * (5 - filled)
+        rating_str = '{:.1f}'.format(obj.rating)
+        return format_html('<span title="{}">{} {}</span>', rating_str, stars, rating_str)
 
     @admin.display(description='Відгуків')
     def reviews_count(self, obj):
         count = obj.reviews.count()
         if count == 0:
             return '0'
-        url = (
-            f'/admin/mountains_roads/routereview/?route__id__exact={obj.pk}'
-        )
+        url = f'/admin/mountains_roads/routereview/?route__id__exact={obj.pk}'
         return format_html('<a href="{}">{}</a>', url, count)
-
 
     @admin.action(description='Перерахувати рейтинги вибраних маршрутів')
     def recalculate_ratings(self, request, queryset):
@@ -72,11 +66,7 @@ class MountainRouteAdmin(admin.ModelAdmin):
         for route in queryset:
             route.refresh_rating()
             updated += 1
-        self.message_user(
-            request,
-            f'Рейтинги перераховано для {updated} маршрут(ів).',
-        )
-
+        self.message_user(request, f'Рейтинги перераховано для {updated} маршрут(ів).')
 
 
 @admin.register(RouteReview)

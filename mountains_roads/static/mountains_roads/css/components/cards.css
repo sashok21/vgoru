@@ -98,3 +98,12 @@
         grid-template-columns: 1fr;
     }
 }
+
+.route-card__image--no-photo {
+    background-color: var(--color-surface-alt);
+    background-image: linear-gradient(
+        135deg,
+        var(--color-primary-light) 0%,
+        var(--color-secondary) 100%
+    );
+}

@@ -1,7 +1,3 @@
-"""
-Базові тести для додатку mountains_roads.
-Запуск: python manage.py test mountains_roads
-"""
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from django.urls import reverse, resolve
@@ -10,10 +6,6 @@ from .models import MountainRoute, RouteReview, UserProfile
 from .forms import UserRegistrationForm
 from .views import UserProfileUpdateView, UserProfileView
 
-
-# ---------------------------------------------------------------------------
-# Допоміжні фабрики
-# ---------------------------------------------------------------------------
 
 def make_route(**kwargs) -> MountainRoute:
     defaults = dict(
@@ -31,13 +23,12 @@ def make_route(**kwargs) -> MountainRoute:
 
 
 def make_user(username='testuser', password='testpass123') -> User:
-    return User.objects.create_user(username=username, password=password,
-                                    email=f'{username}@example.com')
+    return User.objects.create_user(
+        username=username,
+        password=password,
+        email=f'{username}@example.com',
+    )
 
-
-# ===========================================================================
-# 1. Тести моделі MountainRoute
-# ===========================================================================
 
 class MountainRouteModelTest(TestCase):
 
@@ -46,8 +37,6 @@ class MountainRouteModelTest(TestCase):
         self.user1 = make_user('user1')
         self.user2 = make_user('user2')
 
-    # --- get_absolute_url ---------------------------------------------------
-
     def test_get_absolute_url_resolves(self):
         url = self.route.get_absolute_url()
         self.assertEqual(url, f'/routes/{self.route.pk}/')
@@ -55,8 +44,6 @@ class MountainRouteModelTest(TestCase):
     def test_get_absolute_url_is_accessible(self):
         response = self.client.get(self.route.get_absolute_url())
         self.assertEqual(response.status_code, 200)
-
-    # --- get_average_rating -------------------------------------------------
 
     def test_average_rating_no_reviews(self):
         self.assertEqual(self.route.get_average_rating(), 0)
@@ -79,8 +66,6 @@ class MountainRouteModelTest(TestCase):
         )
         self.assertAlmostEqual(self.route.get_average_rating(), 4.0)
 
-    # --- refresh_rating -----------------------------------------------------
-
     def test_refresh_rating_updates_db_field(self):
         RouteReview.objects.create(
             route=self.route, user=self.user1,
@@ -95,32 +80,24 @@ class MountainRouteModelTest(TestCase):
         self.assertAlmostEqual(self.route.rating, 4.0)
 
     def test_refresh_rating_zero_when_no_reviews(self):
-        self.route.rating = 4.5          # руками виставляємо щось
+        self.route.rating = 4.5
         self.route.save(update_fields=['rating'])
         self.route.refresh_rating()
         self.route.refresh_from_db()
         self.assertEqual(self.route.rating, 0)
 
-    # --- __str__ ------------------------------------------------------------
-
     def test_str(self):
         self.assertEqual(str(self.route), 'Говерла')
 
 
-# ===========================================================================
-# 2. Тести сигналів
-# ===========================================================================
-
 class SignalsTest(TestCase):
 
     def test_user_profile_created_on_user_save(self):
-        """Після створення User автоматично існує UserProfile."""
         user = make_user('signaluser')
         self.assertTrue(UserProfile.objects.filter(user=user).exists())
 
     def test_only_one_profile_per_user(self):
         user = make_user('onlyone')
-        # повторний save не повинен створювати дублікат
         user.save()
         self.assertEqual(UserProfile.objects.filter(user=user).count(), 1)
 
@@ -154,18 +131,12 @@ class SignalsTest(TestCase):
         self.assertAlmostEqual(route.rating, 3.0)
 
 
-# ===========================================================================
-# 3. Тести views — статус-коди
-# ===========================================================================
-
 class ViewStatusCodeTest(TestCase):
 
     def setUp(self):
         self.client = Client()
         self.route = make_route()
         self.user = make_user()
-
-    # --- публічні сторінки --------------------------------------------------
 
     def test_home_page_ok(self):
         response = self.client.get(reverse('mountains_roads:home'))
@@ -195,8 +166,6 @@ class ViewStatusCodeTest(TestCase):
         response = self.client.get(reverse('mountains_roads:register'))
         self.assertEqual(response.status_code, 200)
 
-    # --- захищені сторінки без логіну redirect ------------------------------
-
     def test_review_create_redirects_anonymous(self):
         response = self.client.get(
             reverse('mountains_roads:review-create', kwargs={'route_id': self.route.pk})
@@ -214,8 +183,6 @@ class ViewStatusCodeTest(TestCase):
         )
         self.assertEqual(response.status_code, 302)
 
-    # --- захищені сторінки з логіном ----------------------------------------
-
     def test_review_create_ok_when_logged_in(self):
         self.client.login(username='testuser', password='testpass123')
         response = self.client.get(
@@ -228,8 +195,6 @@ class ViewStatusCodeTest(TestCase):
             reverse('mountains_roads:user-profile', kwargs={'username': self.user.username})
         )
         self.assertEqual(response.status_code, 200)
-
-    # --- фільтрація списку маршрутів ----------------------------------------
 
     def test_routes_list_filter_by_difficulty(self):
         make_route(name='Легкий', difficulty=MountainRoute.DIFFICULTY_EASY)
@@ -248,10 +213,6 @@ class ViewStatusCodeTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Унікальна Назва XYZ')
 
-
-# ===========================================================================
-# 4. Тести форм
-# ===========================================================================
 
 class UserRegistrationFormTest(TestCase):
 
@@ -286,10 +247,6 @@ class UserRegistrationFormTest(TestCase):
         self.assertIn('email', form.errors)
 
 
-# ===========================================================================
-# 5. Тест URL-резолвінгу
-# ===========================================================================
-
 class UrlResolutionTest(TestCase):
 
     def test_profile_edit_resolves_to_update_view(self):
@@ -300,19 +257,10 @@ class UrlResolutionTest(TestCase):
         resolved = resolve('/profile/someuser/')
         self.assertEqual(resolved.func.view_class, UserProfileView)
 
-    def test_edit_before_username_no_conflict(self):
-        """Перевіряємо що /profile/edit/ не потрапляє у UserProfileView."""
-        resolved_edit = resolve('/profile/edit/')
-        resolved_user = resolve('/profile/edit/')   # якби конфлікт — впав би
-        self.assertNotEqual(
-            resolved_edit.func.view_class,
-            UserProfileView,
-        )
+    def test_edit_does_not_resolve_to_profile_view(self):
+        resolved = resolve('/profile/edit/')
+        self.assertNotEqual(resolved.func.view_class, UserProfileView)
 
-
-# ===========================================================================
-# 6. Тести AJAX-toggles
-# ===========================================================================
 
 class AjaxToggleTest(TestCase):
 
@@ -323,33 +271,27 @@ class AjaxToggleTest(TestCase):
         self.client.login(username='testuser', password='testpass123')
 
     def _ajax_post(self, url):
-        return self.client.post(
-            url,
-            HTTP_X_REQUESTED_WITH='XMLHttpRequest',
-        )
+        return self.client.post(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
     def test_toggle_favorite_adds(self):
         response = self._ajax_post(
             reverse('mountains_roads:toggle-favorite', kwargs={'route_id': self.route.pk})
         )
         self.assertEqual(response.status_code, 200)
-        data = response.json()
-        self.assertTrue(data['is_favorite'])
+        self.assertTrue(response.json()['is_favorite'])
 
     def test_toggle_favorite_removes(self):
         self.user.profile.favorite_routes.add(self.route)
         response = self._ajax_post(
             reverse('mountains_roads:toggle-favorite', kwargs={'route_id': self.route.pk})
         )
-        data = response.json()
-        self.assertFalse(data['is_favorite'])
+        self.assertFalse(response.json()['is_favorite'])
 
     def test_toggle_completed_adds(self):
         response = self._ajax_post(
             reverse('mountains_roads:toggle-completed', kwargs={'route_id': self.route.pk})
         )
-        data = response.json()
-        self.assertTrue(data['is_completed'])
+        self.assertTrue(response.json()['is_completed'])
 
     def test_toggle_favorite_get_returns_405(self):
         response = self.client.get(

@@ -11,12 +11,14 @@ function initNavbar() {
 
     if (toggle && menu) {
         toggle.addEventListener('click', () => {
-            menu.classList.toggle('navbar__menu--open');
+            const isOpen = menu.classList.toggle('navbar__menu--open');
+            toggle.setAttribute('aria-expanded', String(isOpen));
         });
 
         menu.querySelectorAll('.navbar__link').forEach(link => {
             link.addEventListener('click', () => {
                 menu.classList.remove('navbar__menu--open');
+                toggle.setAttribute('aria-expanded', 'false');
             });
         });
     }
@@ -42,18 +44,23 @@ function initScrollAnimations() {
     const cards = document.querySelectorAll('.card, .feature-card');
     if (!cards.length) return;
 
+    if (!('IntersectionObserver' in window)) {
+        cards.forEach(card => card.classList.add('animate-fade-in-up'));
+        return;
+    }
+
     const observer = new IntersectionObserver((entries) => {
         entries.forEach((entry, i) => {
             if (entry.isIntersecting) {
-                entry.target.style.animationDelay = `${i * 80}ms`;
+                entry.target.style.animationDelay = `${i * 60}ms`;
                 entry.target.classList.add('animate-fade-in-up');
+                entry.target.style.opacity = '';
                 observer.unobserve(entry.target);
             }
         });
-    }, { threshold: 0.08, rootMargin: '0px 0px -60px 0px' });
+    }, { threshold: 0.01, rootMargin: '0px 0px 0px 0px' });
 
     cards.forEach(card => {
-        card.style.opacity = '0';
         observer.observe(card);
     });
 }
